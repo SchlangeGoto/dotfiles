@@ -1,89 +1,114 @@
 #catppuccin-gtk-theme-mocha
 #catppuccin-sddm-theme-mocha
 #kvantum-theme-catppuccin-git
+#yay (should already be installed, is used for installing the packages)
 
-adwsteamgtk
-awesome-terminal-fonts
-bc
-brave-bin
-btop
-cava
-cliphist
-ddcci-driver-linux-dkms
-ddcutil
-fastfetch
-file-roller
-fzf
-git
-gnome-calculator
-gnome-clocks
-grim
-grub
-hypridle
-hyprlock
-hyprpaper
-hyprpicker
-hyprpolkitagent
-hyprshade
-hyprshot
-hyprsunset
-imagemagick
-intellij-idea-ultimate-edition
-jdk21-openjdk
-jq
-kitty
-kvantum
-kvantum-qt5
-lib32-nvidia-utils
-libadwaita-without-adwaita-git
-libqalculate
-lsd
-mpvpaper
-mupdf
-nemo
-nemo-fileroller
-neovim
-network-manager-applet
-noto-fonts-emoji
-nvidia-open
-nvidia-utils
-nwg-displays
-nwg-look
-obsidian
-os-prober
-pavucontrol
-qimgv-git
-qt5-wayland
-qt5ct
-qt6ct
-rofi-wayland
-sbctl
-sddm
-slurp
-spice-vdagent
-spicetify-themes-git
-spotify-launcher
-steam
-swaync
-swww
-ttf-font-awesome
-ttf-jetbrains-mono-nerd
-udiskie
-unzip
-vencord
-waybar
-wlogout
-wlroots
-wtype
-xdg-desktop-portal-gtk
-xdg-desktop-portal-hyprland
-xorg-xeyes
-xorg-xlsclients
-yad
-yay
-yazi
-zathura
-zathura-pdf-mupdf
-zen-browser-bin
-zsh
-zsh-theme-powerlevel10k-git
+essentials=(
+  bc
+  cliphist
+  ddcci-driver-linux-dkms
+  ddcutil
+  fastfetch
+  file-roller
+  grim
+  hypridle
+  hyprlock
+  hyprpaper
+  hyprpicker
+  hyprpolkitagent
+  hyprshade
+  hyprshot
+  hyprsunset
+  imagemagick
+  jq
+  kitty
+  kvantum
+  kvantum-qt5
+  libadwaita-without-adwaita-git
+  mpvpaper
+  nemo
+  nemo-fileroller
+  network-manager-applet
+  nwg-displays
+  nwg-look
+  qt5-wayland
+  qt5ct
+  qt6ct
+  rofi-wayland
+  sddm
+  slurp
+  swaync
+  swww
+  udiskie
+  waybar
+  wlogout
+  wlroots
+  wtype
+  xdg-desktop-portal-gtk
+  xdg-desktop-portal-hyprland
+  yad
+)
+
+nvidia=(
+  nvidia-open
+  nvidia-utils
+  lib32-nvidia-utils
+)
+
+pipewire=(
+  pavucontrol
+)
+
+fonts=(
+  awesome-terminal-fonts
+  ttf-font-awesome
+  ttf-jetbrains-mono-nerd
+  noto-fonts-emoji
+)
+
+dev-tools=(
+  intellij-idea-ultimate-edition
+  jdk21-openjdk
+  neovim
+  git
+  fzf
+)
+
+apps=(
+  brave-bin
+  zen-browser-bin
+  obsidian
+  spotify-launcher
+  vencord
+  spicetify-themes-git
+  gnome-calculator
+  gnome-clocks
+  zathura
+  zathura-pdf-mupdf
+  mupdf
+  qimgv-git
+  yazi
+)
+
+gaming=(
+  steam
+  adwsteamgtk
+)
+
+sys-utils=(
+  btop
+  cava
+  lsd
+  xorg-xeyes
+)
+
+boot=(
+  sbctl
+  grub
+  os-prober
+)
+
+terminal=(
+  zsh-theme-powerlevel10k-git
+  zsh
+)
