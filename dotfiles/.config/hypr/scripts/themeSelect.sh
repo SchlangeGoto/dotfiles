@@ -78,6 +78,32 @@ kill_script="$SCRIPTS/killswww-mpvpaper.sh" # Script to kill wallpaper daemons
 # Get the currently focused monitor
 focused_monitor=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
 
+
+#------------------------------------------------------------------------------
+# Function: check_program_installed
+# Checks if a program is installed and available in PATH
+# Arguments:
+#   $1 - Program name to check
+# Returns:
+#   0 if program is installed, 1 if not
+#------------------------------------------------------------------------------
+check_program_installed() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+#------------------------------------------------------------------------------
+# Function: check_directory_exists
+# Checks if a directory exists
+# Arguments:
+#   $1 - Directory path to check
+# Returns:
+#   0 if directory exists, 1 if not
+#------------------------------------------------------------------------------
+check_directory_exists() {
+  [[ -d "$1" ]]
+}
+
+
 #------------------------------------------------------------------------------
 # Function: set_mpvpaper_wallpaper
 # Sets a video file as wallpaper using mpvpaper
@@ -85,6 +111,12 @@ focused_monitor=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
 #   $1 - Path to the video file
 #------------------------------------------------------------------------------
 set_mpvpaper_wallpaper() {
+
+  # Check if mpvpaper is installed
+  if ! check_program_installed "mpvpaper"; then
+    return 0
+  fi
+
   local video_path="$1"
   # Copy current Wal
   cp "$video_path.png" $HOME/.cache/wallcache/.wallpaper_current
@@ -135,6 +167,12 @@ killall swww-daemon
 #   $1 - Path to the image file
 #------------------------------------------------------------------------------
 set_swww_wallpaper() {
+
+  # Check if swww is installed
+  if ! check_program_installed "swww"; then
+    return 0
+  fi
+
   # Make sure swww daemon is running
   swww query || swww-daemon --format xrgb &
 
@@ -189,6 +227,12 @@ killall mpvpaper
 # Applies the waybar theme from the selected theme
 #------------------------------------------------------------------------------
 apply_waybar() {
+
+  # Check if waybar is installed
+  if ! check_program_installed "waybar"; then
+    return 0
+  fi
+
   # Set path for style.css
   local CSS_PATH="$THEME_DIR/$choice/waybar/style.css"
 
@@ -207,6 +251,12 @@ apply_waybar() {
 # Applies the rofi theme from the selected theme
 #------------------------------------------------------------------------------
 apply_rofi() {
+
+  # Check if rofi is installed
+  if ! check_program_installed "rofi"; then
+    return 0
+  fi
+
   # Set path for rofi theme files
   local ROFI_THEME_DIR="$THEME_DIR/$choice/rofi"
 
@@ -269,6 +319,12 @@ set_wallpaper() {
 # Applies the swaync notification theme from the selected theme
 #------------------------------------------------------------------------------
 apply_swaync() {
+
+  # Check if swaync is installed
+  if ! check_program_installed "swaync"; then
+    return 0
+  fi
+
   # Set path for swaync Theme dir
   local SWAYNC_THEME_DIR="$THEME_DIR/$choice/swaync"
 
@@ -337,6 +393,12 @@ apply_misc() {
 # Applies the SDDM login manager theme from the selected theme
 #------------------------------------------------------------------------------
 apply_sddm() {
+
+  # Check if sddm is installed
+  if ! check_program_installed "sddm"; then
+    return 0
+  fi
+
   # Set SDDM config file path
   local SDDM_CONF_PATH="$THEME_DIR/$choice/sddm/sddm.conf"
 
@@ -354,6 +416,12 @@ apply_sddm() {
 # Applies the kitty terminal theme from the selected theme
 #------------------------------------------------------------------------------
 apply_kitty() {
+
+  # Check if kitty is installed
+  if ! check_program_installed "kitty"; then
+    return 0
+  fi
+
   # Set Kitty Theme dir
   local KITTY_THEME_DIR="$THEME_DIR/$choice/kitty"
 
@@ -376,6 +444,12 @@ apply_kitty() {
 # Applies the yazi file manager theme from the selected theme
 #------------------------------------------------------------------------------
 apply_yazi() {
+
+  # Check if yazi is installed
+  if ! check_program_installed "yazi"; then
+    return 0
+  fi
+
   # This function only checks if yazi theme exist
   if [[ ! -f "$THEME_DIR/$choice/yazi/theme.toml" ]]; then
     notify-send -e "Yazi theme Error" "'$THEME_DIR/$choice/yazi/theme.toml' not found."
@@ -389,6 +463,12 @@ apply_yazi() {
 # Applies the spicetify theme from the selected theme
 #------------------------------------------------------------------------------
 apply_spicetify() {
+
+  # Check if spicetify is installed
+  if ! check_program_installed "spicetify"; then
+    return 0
+  fi
+
   # Run apply script, for setting the theme look in the file
   "$THEME_DIR/$choice/set-spicetify.sh"
 }
@@ -398,6 +478,12 @@ apply_spicetify() {
 # Applies the vesktop theme from the selected theme
 #------------------------------------------------------------------------------
 apply_vesktop() {
+
+  # Check if vesktop config directory exists
+  if ! check_directory_exists "$VESKTOP_DIR"; then
+    return 0
+  fi
+
   # Set Vesktop theme path
   local VESKTOP_THEME_CSS="$THEME_DIR/$choice/vesktop/theme.css"
 
@@ -415,6 +501,12 @@ apply_vesktop() {
 # Applies the vesktop theme from the selected theme
 #------------------------------------------------------------------------------
 apply_zathura() {
+
+  # Check if zathura is installed
+  if ! check_program_installed "zathura"; then
+    return 0
+  fi
+
   # Set Zathura config path
   local ZATHURA_CONFIG_PATH="$THEME_DIR/$choice/zathura/zathurarc"
 
@@ -433,6 +525,12 @@ apply_zathura() {
 # Applies the btop theme from the selected theme
 #------------------------------------------------------------------------------
 apply_btop() {
+
+  # Check if btop is installed
+  if ! check_program_installed "btop"; then
+    return 0
+  fi
+
   # Set btop config path
   local BTOP_CONFIG_PATH="$THEME_DIR/$choice/btop/btop.conf"
 
@@ -450,6 +548,12 @@ apply_btop() {
 # Applies the config from the selected theme
 #------------------------------------------------------------------------------
 apply_mpv() {
+
+  # Check if mpv is installed
+  if ! check_program_installed "mpv"; then
+    return 0
+  fi
+
   # Set mpv config path
   local MPV_CONFIG_PATH="$THEME_DIR/$choice/mpv/mpv.conf"
 
@@ -467,6 +571,12 @@ apply_mpv() {
 # Applies the bat config from the selected theme
 #------------------------------------------------------------------------------
 apply_bat() {
+
+  # Check if bat is installed
+  if ! check_program_installed "bat"; then
+    return 0
+  fi
+
   # Set bat config path
   local BAT_CONFIG_PATH="$THEME_DIR/$choice/bat/config"
 
@@ -484,6 +594,12 @@ apply_bat() {
 # Applies the cava config from the selected theme
 #------------------------------------------------------------------------------
 apply_cava() {
+
+  # Check if cava is installed
+  if ! check_program_installed "cava"; then
+    return 0
+  fi
+
   # Set cava config path
   local CAVA_CONFIG_PATH="$THEME_DIR/$choice/cava/config"
 
@@ -500,6 +616,12 @@ apply_cava() {
 # Applies the fzf config from the selected theme
 #------------------------------------------------------------------------------
 apply_fzf() {
+
+  # Check if fzf is installed
+  if ! check_program_installed "fzf"; then
+    return 0
+  fi
+
   # Set fzf config path
   local FZF_CONFIG_PATH="$THEME_DIR/$choice/fzf/config"
 
@@ -517,6 +639,16 @@ apply_fzf() {
 # Applies the intellij theme
 #------------------------------------------------------------------------------
 apply_intellij() {
+
+  #TODO: Check for installation
+  #TODO: Add a second function for the Ultimate edition
+  #TODO: make the INTELLIJ_THEME_PATH so that it fetches the right path depending on the version installed
+
+  # Check if zathura is installed
+  if ! check_program_installed "zathura"; then
+    return 0
+  fi
+
   # Set fzf config path
   local INTELLIJ_THEME_PATH="$THEME_DIR/$choice/intellij"
 
@@ -542,6 +674,12 @@ apply_intellij() {
 # Applies the intellij theme
 #------------------------------------------------------------------------------
 apply_hyprlock() {
+
+  # Check if hyprlock is installed
+  if ! check_program_installed "hyprlock"; then
+    return 0
+  fi
+
   # Set hyprlock config path
   local HYPRLOCK_CONFIG_PATH="$THEME_DIR/$choice/hypr/hyprlock.conf"
 

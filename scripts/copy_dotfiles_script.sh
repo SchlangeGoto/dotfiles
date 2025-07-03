@@ -228,6 +228,9 @@ copy_dotfiles() {
         fi
         return 1
     fi
+
+    # Run user settings configuration
+    user_settings
 }
 
 user_settings() {
@@ -246,6 +249,13 @@ user_settings() {
         sed -i '/env = EGL_PLATFORM,wayland/s/^#//' config/hypr/configs/env.conf
         print_success "Nvidia configurations applied"
     fi
+
+    # Dual boot Windows question
+    if ask_yn "Do you dual boot with Windows?" "n"; then
+        timedatectl set-local-rtc 1 --adjust-system-clock
+        print_info "Adjusted system clock for Windows"
+    fi
+    echo
 
     set_keyboard_layout
     configure_neovim_desktop
@@ -447,9 +457,6 @@ main() {
     if copy_dotfiles; then
         echo
         print_success "✓ Dotfiles installation completed successfully!"
-        
-        # Run user settings configuration
-        user_settings
         
         exit 0
     else

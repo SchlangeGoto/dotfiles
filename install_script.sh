@@ -33,6 +33,9 @@ YAY_INSTALLED=false
 BASEDEVEL_INSTALLED=false
 GRUB_INSTALLED=false
 OTHER_DM_INSTALLED=false
+OTHER_BOOTLOADER_INSTALLED=false
+OTHER_AUDIO_DAEMON_INSTALLED=false
+ZSH_SHELL_DETECTED=false
 HYPRLAND_INSTALLED=false
 BACKUP_CHOICE=false
 PIPEWIRE_CHOICE=false
@@ -256,13 +259,44 @@ check_requirements() {
         rm -rf yay
         YAY_INSTALLED=true
     fi
-    
-    # Check for GRUB
-    if command -v grub-install &> /dev/null; then
-        GRUB_INSTALLED=true
-        echo -e "${GREEN}✓ GRUB bootloader detected${NC}"
+
+    # Check for ZSH shell
+    if echo "$SHELL" | grep -q "zsh" || \
+       getent passwd "$USER" | cut -d: -f7 | grep -q "zsh" || \
+       [ "$0" = "zsh" ] || \
+       [ -n "$ZSH_VERSION" ]; then
+        ZSH_SHELL_DETECTED=true
+        echo -e "${YELLOW}⚠ ZSH shell detected${NC}"
     else
-        echo -e "${YELLOW}⚠ GRUB bootloader not detected${NC}"
+        echo -e "${GREEN}✓ No ZSH shell in use${NC}"
+    fi
+
+    # Check for other audio daemons
+    if systemctl --user list-unit-files | grep -E "(pulseaudio|jack)" | grep -q enabled || \
+       pgrep -x "pulseaudio" >/dev/null 2>&1 || \
+       pgrep -x "jackd" >/dev/null 2>&1 || \
+       pgrep -x "jackdbus" >/dev/null 2>&1 || \
+       systemctl --user is-active pulseaudio >/dev/null 2>&1 || \
+       systemctl --user is-active jack >/dev/null 2>&1; then
+        OTHER_AUDIO_DAEMON_INSTALLED=true
+        echo -e "${YELLOW}⚠ Other audio daemon detected${NC}"
+    else
+        echo -e "${GREEN}✓ No conflicting audio daemons${NC}"
+    fi
+    
+    # Check for other bootloaders
+    if command -v systemd-boot >/dev/null 2>&1 || \
+       command -v rEFInd >/dev/null 2>&1 || \
+       command -v lilo >/dev/null 2>&1 || \
+       command -v syslinux >/dev/null 2>&1 || \
+       [ -d /boot/loader ] || \
+       [ -f /boot/refind_linux.conf ] || \
+       [ -f /boot/syslinux/syslinux.cfg ] || \
+       [ -f /etc/lilo.conf ]; then
+        OTHER_BOOTLOADER_INSTALLED=true
+        echo -e "${YELLOW}⚠ Other bootloader detected${NC}"
+    else
+        echo -e "${GREEN}✓ No conflicting bootloaders${NC}"
     fi
     
     # Check for other display managers
@@ -394,27 +428,54 @@ gather_preferences() {
         BACKUP_CHOICE=true
     fi
     echo
+
+    # Grub question (if other Boot loader detected)
+    if [[ "$OTHER_BOOTLOADER_INSTALLED" ]]; then
+        if ask_yn "Another boot loader is installed. Do you want to use Grub instead?" "y"; then
+            GRUB_INSTALLED=true
+        else
+            GRUB_INSTALLED=false
+        fi
+        echo
+    else
+        GRUB_INSTALLED=true
+    fi
     
-    # PulseAudio question
-    if ask_yn "Do you want to use PipeWire?" "y"; then
+    # PipeWire question (if other Audio Daemon detected)
+    if [[ "$OTHER_AUDIO_DAEMON_INSTALLED" ]]; then
+        if ask_yn "Another audio daemon is installed. Do you want to use PipeWire instead?" "y"; then
+            PIPEWIRE_CHOICE=true
+        else
+            PIPEWIRE_CHOICE=false
+        fi
+        echo
+    else
         PIPEWIRE_CHOICE=true
     fi
-    echo
     
     # SDDM question (if other DM detected)
-    if [[ "$OTHER_DM_INSTALLED" == "true" ]]; then
+    if [[ "$OTHER_DM_INSTALLED" ]]; then
         if ask_yn "Another display manager is installed. Do you want to use SDDM instead?" "y"; then
             SDDM_CHOICE=true
         else
             SDDM_CHOICE=false
         fi
         echo
+    else
+        SDDM_CHOICE=true
     fi
     
-    if ask_yn "Do you want to use Zsh as your shell?" "y"; then
+    # zsh question (if other shell detected)
+    if [[ "$ZSH_SHELL_DETECTED" ]]; then
+        if ask_yn "Another shell is installed. Do you want to use Zsh instead?" "y"; then
+            ZSH_CHOICE=true
+        else
+            ZSH_CHOICE=false
+        fi
+        echo
+    else
         ZSH_CHOICE=true
     fi
-    echo
 
     # Secure boot (commented for future)
     # if ask_yn "Do you want to enable Secure Boot support?" "n"; then
@@ -434,11 +495,6 @@ gather_preferences() {
     show_selection_menu "APPLICATIONS" APPLICATIONS
     show_selection_menu "SYSTEM UTILITIES" SYSTEM_UTILS
     
-
-    
-
-    
-
 }
 
 # Function to show confirmation
@@ -452,9 +508,10 @@ show_confirmation() {
     echo -e "${ORANGE}System Configuration:${NC}"
     echo -e "  NVIDIA Support: $([[ $NVIDIA_DETECTED == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
     echo -e "  Backup .config: $([[ $BACKUP_CHOICE == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
-    echo -e "  PulseAudio: $([[ $PULSEAUDIO_CHOICE == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
+    echo -e "  PipeWire: $([[ $PIPEWIRE_CHOICE == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
     echo -e "  SDDM: $([[ $SDDM_CHOICE == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
     echo -e "  Zsh Shell: $([[ $ZSH_CHOICE == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
+    echo -e "  Grub: $([[ $GRUB_INSTALLED == true ]] && echo -e "${GREEN}Yes${NC}" || echo -e "${GRAY}No${NC}")"
     echo
     
     echo -e "${ORANGE}Dev Tools:${NC}"
