@@ -23,11 +23,11 @@ SKIPPED_PACKAGES=()
 # Source the package lists
 if [[ ! -f "pkglist.sh" ]]; then
     echo -e "${RED}✗ Package list file 'pkglist.sh' not found!${NC}"
-    echo -e "${RED}  Please ensure pkglist.sh exists in the same directory.${NC}"
+    echo -e "${RED}  Please ensure pkglist.sh exists in the right directory.${NC}"
     exit 1
 fi
 
-source "pkglist.sh"
+source "../pkglist.sh"
 
 # Function to print status messages
 print_status() {

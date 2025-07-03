@@ -591,7 +591,14 @@ execute_installation() {
             echo -e "${YELLOW}⚠ Zsh setup script not found, skipping...${NC}"
         fi
     fi
-    
+
+    #Installing fonts
+    if [[ -f "scripts/fonts.sh" ]]; then
+        bash scripts/fonts.sh
+    else
+        echo -e "${YELLOW}⚠ Fonts setup script not found, skipping...${NC}"
+    fi
+
     # Install selected packages - This is the main addition
     echo -e "${ORANGE}Installing packages...${NC}"
     if [[ -f "scripts/install-packages.sh" ]]; then
@@ -626,24 +633,7 @@ execute_installation() {
     else
         echo -e "${RED}✗ Dotfiles copy script not found!${NC}"
         echo -e "${RED}  Please ensure scripts/copy-dotfiles.sh exists${NC}"
-    fi
-
-    #Installing fonts
-    
-    
-    # Set up permissions and services
-    echo -e "${ORANGE}Setting up services and permissions...${NC}"
-    
-    # SDDM
-    
-    
-    # Set Zsh as default shell if selected
-    if [[ "$ZSH_CHOICE" == "true" ]] && command -v zsh &>/dev/null; then
-        if [[ "$SHELL" != "$(which zsh)" ]]; then
-            chsh -s "$(which zsh)"
-            echo -e "${GREEN}✓ Zsh set as default shell${NC}"
-        fi
-    fi
+    fi    
     
     echo
     echo -e "${BRIGHT_ORANGE}╔═════════════════════════════════════════════════════════════════════════════╗"
